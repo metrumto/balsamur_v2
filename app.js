@@ -91,17 +91,17 @@ function calcular() {
 const di = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
 const de = (anchoCoronacion / 2) + (cota * taludExterior) - (anchoTeja / 2);
 
-// Exterior (usando taludExterior)
-const terraplenExt = (anchoCoronacion / 2) + (cota * taludExterior) - (anchoTeja / 2);
-const desmonteExt  = (anchoCoronacion / 2) + (cota * taludExterior) + (anchoTeja / 2);
+// Interior (según tus fórmulas)
+const terraplenInt = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
+const desmonteInt  = (anchoCoronacion / 2) + (cota * taludInterior) + (anchoTeja / 2);
 
 // Actualizar spans principales
 interiorSpan.textContent = di.toFixed(2) + ' m';
 exteriorSpan.textContent = de.toFixed(2) + ' m';
 
-// Cuadrados exterior
-document.getElementById('desmonte-ext').textContent  = desmonteExt.toFixed(2) + ' m';
-document.getElementById('terraplen-ext').textContent = terraplenExt.toFixed(2) + ' m';
+// Cuadrados interior
+document.getElementById('terraplen-int').textContent = terraplenInt.toFixed(2) + ' m';
+document.getElementById('desmonte-int').textContent  = desmonteInt.toFixed(2) + ' m';
 
 // Guardar parámetros al calcular
 saveParams();
