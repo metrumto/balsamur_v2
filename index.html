@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <title>BalsaMur - Calculadora de balsas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -11,7 +11,7 @@
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.webmanifest">
 
-  <!-- Icono básico (puedes usar el mismo PNG que para el manifest) -->
+  <!-- Icono básico -->
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" href="icon-192.png">
   
@@ -73,9 +73,11 @@
       font-weight: 600;
       font-size: 0.85rem;
     }
-	.label-cota {
-		font-size: 1.05rem;   /* más grande que el resto */
-	}
+
+    .label-cota {
+      font-size: 1.05rem;
+    }
+
     input[type="text"] {
       width: 100%;
       padding: 8px 9px;
@@ -141,12 +143,6 @@
       font-size: 0.95rem;
     }
 
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-
     .result-label {
       font-weight: 600;
     }
@@ -180,96 +176,47 @@
         padding: 20px 18px;
       }
     }
-	.result-card-secondary {
-	  margin-top: 10px;
-	  display: flex;
-	  flex-direction: column;   /* en vertical */
-	  gap: 8px;
-	}
 
-	.result-square {
-	  border-radius: 8px;
-	  border: 1px solid #e0e0e0;
-	  padding: 8px 10px;
-	  background-color: #ffffff;
-	}
+    /* Tarjeta Distancia interior con Terraplén / Desmonte en paralelo */
+    .distance-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-	.result-square-label {
-	  font-weight: 600;
-	  font-size: 0.85rem;
-	  margin-bottom: 4px;
-	}
+    .distance-header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: baseline;
+    }
 
-	.result-square-value {
-	  font-size: 1rem;
-	}
-	.result-card-secondary {
-	  margin-top: 10px;
-	  display: flex;
-	  flex-direction: column;
-	  gap: 8px;
-	}
+    .distance-header .result-label {
+      font-size: 0.95rem;
+    }
 
-	.result-square {
-	  border-radius: 8px;
-	  border: 1px solid #e0e0e0;
-	  padding: 8px 10px;
-	  background-color: #ffffff;
-	}
+    .distance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
 
-	.result-square-label {
-	  font-weight: 600;
-	  font-size: 0.85rem;
-	  margin-bottom: 4px;
-	}
+    .distance-cell {
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+      background-color: #ffffff;
+      text-align: center;
+    }
 
-	.result-square-value {
-	  font-size: 1rem;
-	}
-	.distance-card {
-	  display: flex;
-	  flex-direction: column;
-	  gap: 10px;
-	}
+    .distance-cell-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
 
-	.distance-header {
-	  display: flex;
-	  justify-content: space-between;
-	  align-items: baseline;
-	}
-
-	.distance-header .result-label {
-	  font-size: 0.95rem;
-	}
-
-	.distance-header #interior {
-	  font-size: 1rem;
-	  font-weight: 600;
-	}
-
-	.distance-grid {
-	  display: grid;
-	  grid-template-columns: 1fr 1fr;
-	  gap: 8px;
-	}
-
-	.distance-cell {
-	  border-radius: 8px;
-	  border: 1px solid #e0e0e0;
-	  padding: 6px 8px;
-	  background-color: #ffffff;
-	  text-align: center;
-	}
-
-	.distance-cell-label {
-	  font-weight: 600;
-	  font-size: 0.85rem;
-	  margin-bottom: 4px;
-	}
-
-	.distance-cell-value {
-	  font-size: 1rem;
-	}
+    .distance-cell-value {
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -278,7 +225,7 @@
       <h1>BalsaMur</h1>
       <div class="subtitle">Calculadora de balsas</div>
 
-      <!-- PRIMERA TARJETA: solo cota y resultado -->
+      <!-- Campo de cota -->
       <div class="field-group">
         <label for="cota" class="label-cota">Altura hasta coronación (m)</label>
         <input id="cota" type="text" inputmode="decimal" placeholder="Introduce la cota">
@@ -288,29 +235,23 @@
 
       <div id="error" class="error"></div>
 
-		<div class="result-card distance-card">
-		  <div class="distance-header">
-			<span class="result-label">Distancia interior</span>
-			<span id="interior">-</span>
-		  </div>
+      <!-- Tarjeta única: Distancia interior con Terraplén y Desmonte en paralelo -->
+      <div class="result-card distance-card">
+        <div class="distance-header">
+          <span class="result-label">Distancia interior</span>
+        </div>
 
-		  <div class="distance-grid">
-			<div class="distance-cell">
-			  <div class="distance-cell-label">Terraplén</div>
-			  <div class="distance-cell-value" id="terraplen-int">-</div>
-			</div>
-			<div class="distance-cell">
-			  <div class="distance-cell-label">Desmonte</div>
-			  <div class="distance-cell-value" id="desmonte-int">-</div>
-			</div>
-		  </div>
-		</div>
-		<div class="result-card">
-		  <div class="result-row">
-			<span class="result-label">Distancia exterior:</span>
-			<span id="exterior">-</span>
-		  </div>
-		</div>
+        <div class="distance-grid">
+          <div class="distance-cell">
+            <div class="distance-cell-label">Terraplén</div>
+            <div class="distance-cell-value" id="terraplen-int">-</div>
+          </div>
+          <div class="distance-cell">
+            <div class="distance-cell-label">Desmonte</div>
+            <div class="distance-cell-value" id="desmonte-int">-</div>
+          </div>
+        </div>
+      </div>
 
       <!-- BOTÓN PARA VER PARÁMETROS -->
       <button class="btn-secondary" type="button" onclick="toggleAvanzados()">
@@ -357,7 +298,7 @@
     </div>
   </div>
 
-    <!-- Lógica de la app, en archivo externo (no inline) -->
+  <!-- Lógica de la app, en archivo externo (no inline) -->
   <script src="app.js"></script>
 
   <!-- Registro del Service Worker para PWA -->
