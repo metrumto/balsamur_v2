@@ -73,9 +73,11 @@ function calcular() {
   const alturaCoronacion = parseNum('alturaCoronacion');
   const alturaFondo = parseNum('alturaFondo');
 
-  if ([anchoTeja, anchoCoronacion, taludInterior,
-       taludExterior, alturaCoronacion, alturaFondo]
-      .some(v => isNaN(v))) {
+  if (
+    [anchoTeja, anchoCoronacion, taludInterior,
+     taludExterior, alturaCoronacion, alturaFondo]
+      .some(v => isNaN(v))
+  ) {
     errorDiv.textContent = 'Revisa los parámetros, hay valores no válidos.';
     return;
   }
@@ -88,23 +90,28 @@ function calcular() {
     return;
   }
 
-const di = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
-const de = (anchoCoronacion / 2) + (cota * taludExterior) - (anchoTeja / 2);
+  // Distancias interior y exterior
+  const di = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
+  const de = (anchoCoronacion / 2) + (cota * taludExterior) - (anchoTeja / 2);
 
-// Interior (según tus fórmulas)
-const terraplenInt = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
-const desmonteInt  = (anchoCoronacion / 2) + (cota * taludInterior) + (anchoTeja / 2);
+  // Interior (según tus fórmulas)
+  const terraplenInt = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
+  const desmonteInt  = (anchoCoronacion / 2) + (cota * taludInterior) + (anchoTeja / 2);
 
-// Actualizar spans principales
-interiorSpan.textContent = di.toFixed(2) + ' m';
-exteriorSpan.textContent = de.toFixed(2) + ' m';
+  // Actualizar cabecera de distancia interior
+  interiorSpan.textContent = di.toFixed(2) + ' m';
 
-// Cuadrados interior
-document.getElementById('terraplen-int').textContent = terraplenInt.toFixed(2) + ' m';
-document.getElementById('desmonte-int').textContent  = desmonteInt.toFixed(2) + ' m';
+  // Si mantienes la tarjeta de distancia exterior
+  if (exteriorSpan) {
+    exteriorSpan.textContent = de.toFixed(2) + ' m';
+  }
 
-// Guardar parámetros al calcular
-saveParams();
+  // Actualizar celdas terraplén / desmonte
+  document.getElementById('terraplen-int').textContent = terraplenInt.toFixed(2) + ' m';
+  document.getElementById('desmonte-int').textContent  = desmonteInt.toFixed(2) + ' m';
+
+  // Guardar parámetros al calcular
+  saveParams();
 }
 
 // Cargar parámetros al abrir la página

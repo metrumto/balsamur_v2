@@ -226,6 +226,50 @@
 	.result-square-value {
 	  font-size: 1rem;
 	}
+	.distance-card {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 10px;
+	}
+
+	.distance-header {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: baseline;
+	}
+
+	.distance-header .result-label {
+	  font-size: 0.95rem;
+	}
+
+	.distance-header #interior {
+	  font-size: 1rem;
+	  font-weight: 600;
+	}
+
+	.distance-grid {
+	  display: grid;
+	  grid-template-columns: 1fr 1fr;
+	  gap: 8px;
+	}
+
+	.distance-cell {
+	  border-radius: 8px;
+	  border: 1px solid #e0e0e0;
+	  padding: 6px 8px;
+	  background-color: #ffffff;
+	  text-align: center;
+	}
+
+	.distance-cell-label {
+	  font-weight: 600;
+	  font-size: 0.85rem;
+	  margin-bottom: 4px;
+	}
+
+	.distance-cell-value {
+	  font-size: 1rem;
+	}
   </style>
 </head>
 <body>
@@ -244,46 +288,27 @@
 
       <div id="error" class="error"></div>
 
-      <div class="result-card">
-        <div class="result-row">
-          <span class="result-label">Distancia interior:</span>
-          <span id="interior">-</span>
-        </div>
-        <div class="result-row">
-          <span class="result-label">Distancia exterior:</span>
-          <span id="exterior">-</span>
-        </div>
-	  </div>
-		<div class="result-card result-card-secondary">
-		  <div class="result-square">
-			<div class="result-square-label">Interior terraplén</div>
-			<div class="result-square-value" id="terraplen-int">-</div>
-		  </div>
-		  <div class="result-square">
-			<div class="result-square-label">Interior desmonte</div>
-			<div class="result-square-value" id="desmonte-int">-</div>
-		  </div>
-		</div>
-	  <div class="result-card">
-		  <div class="result-row">
-			<span class="result-label">Distancia interior:</span>
+		<div class="result-card distance-card">
+		  <div class="distance-header">
+			<span class="result-label">Distancia interior</span>
 			<span id="interior">-</span>
 		  </div>
+
+		  <div class="distance-grid">
+			<div class="distance-cell">
+			  <div class="distance-cell-label">Terraplén</div>
+			  <div class="distance-cell-value" id="terraplen-int">-</div>
+			</div>
+			<div class="distance-cell">
+			  <div class="distance-cell-label">Desmonte</div>
+			  <div class="distance-cell-value" id="desmonte-int">-</div>
+			</div>
+		  </div>
+		</div>
+		<div class="result-card">
 		  <div class="result-row">
 			<span class="result-label">Distancia exterior:</span>
 			<span id="exterior">-</span>
-		  </div>
-		</div>
-
-		<!-- Cuadrados talud exterior -->
-		<div class="result-card result-card-secondary">
-		  <div class="result-square">
-			<div class="result-square-label">Exterior desmonte</div>
-			<div class="result-square-value" id="desmonte-ext">-</div>
-		  </div>
-		  <div class="result-square">
-			<div class="result-square-label">Exterior terraplén</div>
-			<div class="result-square-value" id="terraplen-ext">-</div>
 		  </div>
 		</div>
 
