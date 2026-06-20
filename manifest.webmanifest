@@ -1,0 +1,26 @@
+{
+  "name": "BalsaMur - Calculadora de balsas",
+  "short_name": "BalsaMur",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#1976d2",
+  "description": "Calculadora de distancias interior y exterior en balsas.",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+	{
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+  ]
+}
