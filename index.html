@@ -235,21 +235,32 @@
       background-color: #fdecea;   /* rojo suave */
       border-color: #f4c1bc;
     }
+	.watermark img {
+	  max-width: 220px;  /* o 240, 260, según veas */
+	  height: auto;
+	}.watermark {
+	  position: fixed;
+	  bottom: 4px;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  opacity: 0.5;      /* antes 0.35 */
+	  pointer-events: none;
+	}
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card-main">
+  <main class="container">
+    <section class="card-main">
       <h1>BalsaMur</h1>
       <div class="subtitle">Calculadora de balsas</div>
 
       <!-- Campo de cota -->
       <div class="field-group">
         <label for="cota" class="label-cota">Altura hasta coronación (m)</label>
-        <input id="cota" type="text" inputmode="decimal" placeholder="Introduce la cota">
+        <input id="cota" type="text" inputmode="decimal" placeholder="Introduce la cota" autocomplete="off" aria-label="Altura hasta coronación en metros">
       </div>
 
-      <button onclick="calcular()">Calcular</button>
+      <button id="btnCalcular">Calcular</button>
 
       <div id="error" class="error"></div>
 
@@ -280,7 +291,7 @@
       </div>
 
       <!-- BOTÓN PARA VER PARÁMETROS -->
-      <button class="btn-secondary" type="button" onclick="toggleAvanzados()">
+      <button class="btn-secondary" type="button" id="btnAvanzados"aria-expanded="false" aria-controls="advancedPanel">
         Parámetros de TRAILLA y BALSA
       </button>
 
@@ -291,33 +302,33 @@
         <div class="row">
           <div class="field-group">
             <label for="anchoTeja">Ancho teja (m)</label>
-            <input id="anchoTeja" type="text" inputmode="decimal" value="2.5">
+            <input id="anchoTeja" type="text" inputmode="decimal" value="2.5" autocomplete="off">
           </div>
           <div class="field-group">
             <label for="anchoCoronacion">Ancho coronación (m)</label>
-            <input id="anchoCoronacion" type="text" inputmode="decimal" value="5">
+            <input id="anchoCoronacion" type="text" inputmode="decimal" value="5" autocomplete="off">
           </div>
         </div>
 
         <div class="row">
           <div class="field-group">
             <label for="taludInterior">Talud interior</label>
-            <input id="taludInterior" type="text" inputmode="decimal" value="2.6">
+            <input id="taludInterior" type="text" inputmode="decimal" value="2.6" autocomplete="off">
           </div>
           <div class="field-group">
             <label for="taludExterior">Talud exterior</label>
-            <input id="taludExterior" type="text" inputmode="decimal" value="1.5">
+            <input id="taludExterior" type="text" inputmode="decimal" value="1.5" autocomplete="off">
           </div>
         </div>
 
         <div class="row">
           <div class="field-group">
             <label for="alturaCoronacion">Altura coronación (m)</label>
-            <input id="alturaCoronacion" type="text" inputmode="decimal" value="1.36">
+            <input id="alturaCoronacion" type="text" inputmode="decimal" value="1.36" autocomplete="off">
           </div>
           <div class="field-group">
             <label for="alturaFondo">Altura fondo (m)</label>
-            <input id="alturaFondo" type="text" inputmode="decimal" value="5.29">
+            <input id="alturaFondo" type="text" inputmode="decimal" value="5.29" autocomplete="off">
           </div>
         </div>
       </div>

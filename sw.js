@@ -1,26 +1,34 @@
-const CACHE_NAME = 'balsamur-cache-v2';   // nueva versión de caché
+const CACHE_NAME = 'balsamur-cache-v3';
+
 const FILES_TO_CACHE = [
   './',
   './index.html',
   './app.js',
   './sw-register.js',
   './manifest.webmanifest',
-  './sw.js',
   './icon-512.png',
   './icon-192.png',
-  './marca-agua.png'       // ojo: aquí faltaba una coma antes en tu código
+  './marca-agua.png'
 ];
 
-// Instalar: cachear los archivos básicos
+// INSTALAR
 self.addEventListener('install', event => {
+  self.skipWaiting();
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(FILES_TO_CACHE);
+    caches.open(CACHE_NAME).then(async cache => {
+      for (const file of FILES_TO_CACHE) {
+        try {
+          await cache.add(file);
+        } catch (e) {
+          console.warn('No se pudo cachear:', file);
+        }
+      }
     })
   );
 });
 
-// Activar: limpieza de caches antiguos (por si cambias el nombre)
+// ACTIVAR
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -31,12 +39,14 @@ self.addEventListener('activate', event => {
           }
         })
       )
-    )
+    ).then(() => self.clients.claim())
   );
 });
 
-// Fetch: servir desde caché y, si no hay, ir a la red
+// FETCH
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
