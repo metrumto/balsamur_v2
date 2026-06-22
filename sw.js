@@ -1,55 +1,31 @@
-const CACHE_NAME = 'balsamur-cache-v3';
+const CACHE_NAME = "balsamur-v1";
 
-const FILES_TO_CACHE = [
-  './',
-  './index.html',
-  './app.js',
-  './sw-register.js',
-  './manifest.webmanifest',
-  './icon-512.png',
-  './icon-192.png',
-  './marca-agua.png'
+// Solo cache básico (NO app.js ni lógica dinámica)
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icon-192.png"
 ];
 
-// INSTALAR
-self.addEventListener('install', event => {
+self.addEventListener("install", (event) => {
   self.skipWaiting();
-
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async cache => {
-      for (const file of FILES_TO_CACHE) {
-        try {
-          await cache.add(file);
-        } catch (e) {
-          console.warn('No se pudo cachear:', file);
-        }
-      }
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
 });
 
-// ACTIVAR
-self.addEventListener('activate', event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      )
-    ).then(() => self.clients.claim())
+      Promise.all(keys.map(k => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-// FETCH
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
+/* IMPORTANTE:
+   No cacheamos JS dinámico para evitar bugs de versiones */
+self.addEventListener("fetch", (event) => {
+  event.respondWith(fetch(event.request));
 });
