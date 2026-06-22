@@ -143,6 +143,12 @@
       font-size: 0.95rem;
     }
 
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
     .result-label {
       font-weight: 600;
     }
@@ -215,7 +221,19 @@
     }
 
     .distance-cell-value {
-      font-size: 1rem;
+      font-size: 1.2rem;   /* más grande */
+      font-weight: 600;
+    }
+
+    /* Colores según tipo */
+    .distance-cell-terraplen {
+      background-color: #e6f4ea;   /* verde suave */
+      border-color: #c3e6cd;
+    }
+
+    .distance-cell-desmonte {
+      background-color: #fdecea;   /* rojo suave */
+      border-color: #f4c1bc;
     }
   </style>
 </head>
@@ -235,21 +253,29 @@
 
       <div id="error" class="error"></div>
 
-      <!-- Tarjeta única: Distancia interior con Terraplén y Desmonte en paralelo -->
+      <!-- Tarjeta Distancia interior -->
       <div class="result-card distance-card">
         <div class="distance-header">
-          <span class="result-label">Distancia interior</span>
+          <span class="result-label">Distancia en TALUD interior</span>
         </div>
 
         <div class="distance-grid">
-          <div class="distance-cell">
+          <div class="distance-cell distance-cell-terraplen">
             <div class="distance-cell-label">Terraplén</div>
             <div class="distance-cell-value" id="terraplen-int">-</div>
           </div>
-          <div class="distance-cell">
+          <div class="distance-cell distance-cell-desmonte">
             <div class="distance-cell-label">Desmonte</div>
             <div class="distance-cell-value" id="desmonte-int">-</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Distancia exterior -->
+      <div class="result-card">
+        <div class="result-row">
+          <span class="result-label">Distancia en TALUD exterior</span>
+          <span id="exterior">-</span>
         </div>
       </div>
 

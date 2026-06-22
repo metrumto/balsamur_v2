@@ -88,18 +88,23 @@ function calcular() {
     return;
   }
 
-  // Distancia interior (por si la quieres usar internamente)
+  // Distancias interior y exterior
   const di = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
-  // Distancia exterior (no se muestra pero se calcula por coherencia)
   const de = (anchoCoronacion / 2) + (cota * taludExterior) - (anchoTeja / 2);
 
   // Interior (según tus fórmulas de terraplén/desmonte)
   const terraplenInt = (anchoCoronacion / 2) + (cota * taludInterior) - (anchoTeja / 2);
   const desmonteInt  = (anchoCoronacion / 2) + (cota * taludInterior) + (anchoTeja / 2);
 
-  // Actualizar celdas terraplén / desmonte en la tarjeta "Distancia interior"
+  // Actualizar celdas Terraplén / Desmonte interiores
   document.getElementById('terraplen-int').textContent = terraplenInt.toFixed(2) + ' m';
   document.getElementById('desmonte-int').textContent  = desmonteInt.toFixed(2) + ' m';
+
+  // Actualizar tarjeta de Distancia exterior (si existe en el HTML)
+  const exteriorSpan = document.getElementById('exterior');
+  if (exteriorSpan) {
+    exteriorSpan.textContent = de.toFixed(2) + ' m';
+  }
 
   // Guardar parámetros al calcular
   saveParams();
