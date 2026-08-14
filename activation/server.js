@@ -24,9 +24,6 @@ async function init() {
   )`);
   await pool.query('CREATE INDEX IF NOT EXISTS licenses_device_idx ON licenses(device_hash)');
 
-  // INITIAL_CODES is supplied only through Render Environment Variables.
-  // Plain-text codes are never committed to the repository. On startup they are
-  // hashed and inserted if missing; only the hashes are persisted in PostgreSQL.
   const initialCodes = (process.env.INITIAL_CODES || '')
     .split(',')
     .map(s => s.trim().toUpperCase())
@@ -34,7 +31,7 @@ async function init() {
   if (initialCodes.length) {
     if (initialCodes.length !== 50) throw new Error('INITIAL_CODES must contain exactly 50 codes');
     for (const code of initialCodes) {
-      if (!/^[A-Z0-9]{16}$/.test(code)) throw new Error('All activation codes must be 16 alphanumeric characters');
+      if (!/^[A-Z0-9]{12}$/.test(code)) throw new Error('All activation codes must be exactly 12 alphanumeric characters');
       await pool.query('INSERT INTO licenses (code_hash) VALUES ($1) ON CONFLICT (code_hash) DO NOTHING', [hash(code)]);
     }
   }
@@ -47,7 +44,7 @@ app.get('/health', async (_req, res) => {
 
 app.post('/activate', async (req, res) => {
   const { code, deviceId } = req.body || {};
-  if (typeof code !== 'string' || typeof deviceId !== 'string' || code.length < 8 || deviceId.length < 8) {
+  if (typeof code !== 'string' || !/^[A-Za-z0-9]{12}$/.test(code) || typeof deviceId !== 'string' || deviceId.length < 8) {
     return res.status(400).json({ ok: false, error: 'invalid_request' });
   }
   const codeHash = hash(code);
