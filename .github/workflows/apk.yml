@@ -11,20 +11,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-
       - name: Generate Android project
         shell: bash
         run: |
-          mkdir -p android/app/src/main/java/com/metrumto/balsamur android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-hdpi android/app/src/main/res/mipmap-mdpi android/app/src/main/res/mipmap-xhdpi android/app/src/main/res/mipmap-xxhdpi android/app/src/main/res/mipmap-xxxhdpi
+          mkdir -p android/app/src/main/java/com/metrumto/balsamur android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/values
           cp index.html app.js manifest.webmanifest sw.js sw-register.js android/app/src/main/assets/
           cp icon-192.png android/app/src/main/res/drawable/icon.png
           cat > android/settings.gradle <<'EOF'
@@ -39,7 +36,7 @@ EOF
           cat > android/app/build.gradle <<'EOF'
 plugins { id 'com.android.application' }
 android { namespace 'com.metrumto.balsamur'; compileSdk 35
-    defaultConfig { applicationId 'com.metrumto.balsamur'; minSdk 23; targetSdk 35; versionCode 2; versionName '2.0' }
+    defaultConfig { applicationId 'com.metrumto.balsamur'; minSdk 23; targetSdk 35; versionCode 3; versionName '3.0' }
 }
 EOF
           cat > android/app/src/main/AndroidManifest.xml <<'EOF'
@@ -55,7 +52,6 @@ EOF
     </application>
 </manifest>
 EOF
-          mkdir -p android/app/src/main/res/values
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
 <resources><style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:colorAccent">#1565C0</item><item name="android:navigationBarColor">#000000</item><item name="android:windowLightStatusBar">true</item><item name="android:statusBarColor">#FFFFFF</item></style></resources>
 EOF
@@ -76,7 +72,6 @@ import android.widget.Toast;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -95,125 +90,40 @@ public class MainActivity extends Activity {
   private WebView web;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  @Override public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (isActivated()) showApp(); else showActivationDialog();
-  }
-
-  private boolean isActivated() {
-    return getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_ACTIVATED, false);
-  }
-
+  @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); if (isActivated()) showApp(); else showActivationDialog(); }
+  private boolean isActivated() { return getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_ACTIVATED, false); }
   private void showApp() {
-    web = new WebView(this);
-    web.setWebViewClient(new WebViewClient());
-    WebSettings s = web.getSettings();
-    s.setJavaScriptEnabled(true);
-    s.setDomStorageEnabled(true);
-    s.setAllowFileAccess(true);
-    s.setAllowContentAccess(true);
-    web.loadUrl("file:///android_asset/index.html");
-    setContentView(web);
+    web = new WebView(this); web.setWebViewClient(new WebViewClient()); WebSettings s = web.getSettings();
+    s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setAllowContentAccess(true);
+    web.loadUrl("file:///android_asset/index.html"); setContentView(web);
   }
-
   private void showActivationDialog() {
-    LinearLayout box = new LinearLayout(this);
-    box.setOrientation(LinearLayout.VERTICAL);
-    int p = (int)(24 * getResources().getDisplayMetrics().density);
-    box.setPadding(p, 0, p, 0);
-    TextView info = new TextView(this);
-    info.setText("Introduce el código de activación de BalsaMur.");
-    info.setPadding(0, 0, 0, p / 2);
-    EditText input = new EditText(this);
-    input.setHint("Código de 16 caracteres");
-    input.setSingleLine(true);
-    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-    box.addView(info, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-    box.addView(input, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-    AlertDialog dialog = new AlertDialog.Builder(this)
-      .setTitle("Activar BalsaMur")
-      .setView(box)
-      .setCancelable(false)
-      .setNegativeButton("Salir", (d, w) -> finish())
-      .setPositiveButton("Activar", null)
-      .create();
-
-    dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-      String code = input.getText().toString().trim().toUpperCase();
-      if (!code.matches("[A-Z0-9]{16}")) {
-        input.setError("El código debe tener 16 caracteres alfanuméricos");
-        return;
-      }
-      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-      activate(code, dialog, input);
-    }));
-    dialog.show();
+    LinearLayout box = new LinearLayout(this); box.setOrientation(LinearLayout.VERTICAL); int p=(int)(24*getResources().getDisplayMetrics().density); box.setPadding(p,0,p,0);
+    TextView info=new TextView(this); info.setText("Introduce el código de activación de BalsaMur."); info.setPadding(0,0,0,p/2);
+    EditText input=new EditText(this); input.setHint("Código de 16 caracteres"); input.setSingleLine(true); input.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+    box.addView(info,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)); box.addView(input,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+    AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Activar BalsaMur").setView(box).setCancelable(false).setNegativeButton("Salir",(d,w)->finish()).setPositiveButton("Activar",null).create();
+    dialog.setOnShowListener(d->dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{String code=input.getText().toString().trim().toUpperCase(); if(!code.matches("[A-Z0-9]{16}")){input.setError("El código debe tener 16 caracteres alfanuméricos");return;} dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false); activate(code,dialog); })); dialog.show();
   }
-
-  private void activate(String code, AlertDialog dialog, EditText input) {
-    executor.execute(() -> {
-      int status = -1;
-      String body = "";
-      try {
-        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        JSONObject payload = new JSONObject();
-        payload.put("code", code);
-        payload.put("deviceId", deviceId == null ? "unknown-device" : deviceId);
-
-        HttpURLConnection c = (HttpURLConnection) new URL(ACTIVATION_URL).openConnection();
-        c.setRequestMethod("POST");
-        c.setConnectTimeout(15000);
-        c.setReadTimeout(15000);
-        c.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-        c.setDoOutput(true);
-        try (OutputStream os = c.getOutputStream()) { os.write(payload.toString().getBytes(StandardCharsets.UTF_8)); }
-        status = c.getResponseCode();
-        InputStream stream = status >= 400 ? c.getErrorStream() : c.getInputStream();
-        if (stream != null) {
-          try (BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            String line; StringBuilder sb = new StringBuilder();
-            while ((line = r.readLine()) != null) sb.append(line);
-            body = sb.toString();
-          }
-        }
-        c.disconnect();
-      } catch (Exception e) { body = e.getMessage() == null ? "network_error" : e.getMessage(); }
-
-      final int result = status;
-      final String response = body;
-      runOnUiThread(() -> {
-        boolean ok = result == 200 && response.contains("\"ok\":true");
-        if (ok) {
-          getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_ACTIVATED, true).apply();
-          dialog.dismiss();
-          showApp();
-        } else {
-          String msg = result == 409 ? "Este código ya está asociado a otro dispositivo." :
-              result == 403 ? "Código no válido." :
-              "No se ha podido conectar con el servidor de activación.";
-          Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }
-      });
-    });
+  private void activate(String code, AlertDialog dialog) {
+    executor.execute(()->{int status=-1; String body=""; try {
+      String deviceId=Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID); JSONObject payload=new JSONObject(); payload.put("code",code); payload.put("deviceId",deviceId==null?"unknown-device":deviceId);
+      HttpURLConnection c=(HttpURLConnection)new URL(ACTIVATION_URL).openConnection(); c.setRequestMethod("POST"); c.setConnectTimeout(15000); c.setReadTimeout(15000); c.setRequestProperty("Content-Type","application/json; charset=UTF-8"); c.setDoOutput(true);
+      try(OutputStream os=c.getOutputStream()){os.write(payload.toString().getBytes(StandardCharsets.UTF_8));} status=c.getResponseCode(); InputStream stream=status>=400?c.getErrorStream():c.getInputStream();
+      if(stream!=null)try(BufferedReader r=new BufferedReader(new InputStreamReader(stream,StandardCharsets.UTF_8))){String line;StringBuilder sb=new StringBuilder();while((line=r.readLine())!=null)sb.append(line);body=sb.toString();} c.disconnect();
+    }catch(Exception e){body=e.getMessage()==null?"network_error":e.getMessage();}
+    final int result=status; final String response=body; runOnUiThread(()->{boolean ok=result==200&&response.contains("\"ok\":true"); if(ok){getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean(KEY_ACTIVATED,true).apply();dialog.dismiss();showApp();}else{String msg=result==409?"Este código ya está asociado a otro dispositivo.":result==403?"Código no válido.":"No se ha podido conectar con el servidor de activación.";Toast.makeText(this,msg,Toast.LENGTH_LONG).show();dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);}}); });
   }
-
-  @Override protected void onDestroy() {
-    executor.shutdownNow();
-    super.onDestroy();
-  }
+  @Override protected void onDestroy(){executor.shutdownNow();super.onDestroy();}
 }
 EOF
           cd android
           gradle wrapper --gradle-version 8.7
-
       - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: BalsaMur-APK-v2
+          name: BalsaMur-APK-v3
           path: android/app/build/outputs/apk/debug/app-debug.apk
