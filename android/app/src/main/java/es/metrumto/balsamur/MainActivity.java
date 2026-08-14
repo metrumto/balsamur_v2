@@ -6,7 +6,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class MainActivity {
+public class MainActivity extends Activity {
   @Override public void onCreate(Bundle state) {
     super.onCreate(state);
     WebView web = new WebView(this);
