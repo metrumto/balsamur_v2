@@ -22,7 +22,22 @@ async function init() {
     activated_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`);
-  await pool.query(`CREATE INDEX IF NOT EXISTS licenses_device_idx ON licenses(device_hash)`);
+  await pool.query('CREATE INDEX IF NOT EXISTS licenses_device_idx ON licenses(device_hash)');
+
+  // INITIAL_CODES is supplied only through Render Environment Variables.
+  // Plain-text codes are never committed to the repository. On startup they are
+  // hashed and inserted if missing; only the hashes are persisted in PostgreSQL.
+  const initialCodes = (process.env.INITIAL_CODES || '')
+    .split(',')
+    .map(s => s.trim().toUpperCase())
+    .filter(Boolean);
+  if (initialCodes.length) {
+    if (initialCodes.length !== 50) throw new Error('INITIAL_CODES must contain exactly 50 codes');
+    for (const code of initialCodes) {
+      if (!/^[A-Z0-9]{16}$/.test(code)) throw new Error('All activation codes must be 16 alphanumeric characters');
+      await pool.query('INSERT INTO licenses (code_hash) VALUES ($1) ON CONFLICT (code_hash) DO NOTHING', [hash(code)]);
+    }
+  }
 }
 
 app.get('/health', async (_req, res) => {
