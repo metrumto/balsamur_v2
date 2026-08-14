@@ -1,0 +1,103 @@
+name: Build BalsaMur APK
+
+on:
+  push:
+    branches: [ apk-balsamur ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Android project
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/java/com/metrumto/balsamur android/app/src/main/assets android/app/src/main/res/drawable android/app/src/main/res/mipmap-hdpi android/app/src/main/res/mipmap-mdpi android/app/src/main/res/mipmap-xhdpi android/app/src/main/res/mipmap-xxhdpi android/app/src/main/res/mipmap-xxxhdpi
+          cp index.html app.js manifest.webmanifest sw.js sw-register.js android/app/src/main/assets/
+          cp icon-192.png android/app/src/main/res/drawable/icon.png
+          cat > android/settings.gradle <<'EOF'
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+rootProject.name='BalsaMur'
+include ':app'
+EOF
+          cat > android/build.gradle <<'EOF'
+plugins {
+    id 'com.android.application' version '8.6.1' apply false
+}
+EOF
+          cat > android/app/build.gradle <<'EOF'
+plugins { id 'com.android.application' }
+
+android { namespace 'com.metrumto.balsamur'; compileSdk 35
+    defaultConfig { applicationId 'com.metrumto.balsamur'; minSdk 23; targetSdk 35; versionCode 1; versionName '1.0' }
+}
+EOF
+          cat > android/app/src/main/AndroidManifest.xml <<'EOF'
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:theme="@style/AppTheme" android:label="BalsaMur" android:icon="@drawable/icon" android:usesCleartextTraffic="false">
+        <activity android:name=".MainActivity" android:screenOrientation="unspecified" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+EOF
+          mkdir -p android/app/src/main/res/values
+          cat > android/app/src/main/res/values/styles.xml <<'EOF'
+<resources><style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:colorAccent">#1565C0</item><item name="android:navigationBarColor">#000000</item><item name="android:windowLightStatusBar">true</item><item name="android:statusBarColor">#FFFFFF</item></style></resources>
+EOF
+          cat > android/app/src/main/java/com/metrumto/balsamur/MainActivity.java <<'EOF'
+package com.metrumto.balsamur;
+import android.app.Activity;
+import android.os.Bundle;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+public class MainActivity extends Activity {
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    WebView web = new WebView(this);
+    web.setWebViewClient(new WebViewClient());
+    WebSettings s = web.getSettings();
+    s.setJavaScriptEnabled(true);
+    s.setDomStorageEnabled(true);
+    s.setAllowFileAccess(true);
+    s.setAllowContentAccess(true);
+    web.loadUrl("file:///android_asset/index.html");
+    setContentView(web);
+  }
+  @Override public void onBackPressed() {
+    WebView web = (WebView) findViewById(android.R.id.content);
+    super.onBackPressed();
+  }
+}
+EOF
+          cd android
+          gradle wrapper --gradle-version 8.7
+
+      - name: Build APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BalsaMur-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
