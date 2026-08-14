@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: balsamur-activation
+    runtime: node
+    rootDir: activation-server
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: DB_PATH
+        value: /var/data/activation.db
+    disk:
+      name: activation-data
+      mountPath: /var/data
+      sizeGB: 1
