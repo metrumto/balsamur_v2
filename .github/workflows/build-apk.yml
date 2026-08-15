@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare web assets
+      - name: Prepare web and Android assets
         run: |
-          mkdir -p android/app/src/main/assets/www
+          mkdir -p android/app/src/main/assets/www android/app/src/main/res/drawable
           cp index.html app.js sw-register.js sw.js icon-192.png icon-512.png marca-agua.png android/app/src/main/assets/www/
+          curl -fsSL https://raw.githubusercontent.com/metrumto/balsamur_v2/main/icon-512.png -o android/app/src/main/res/drawable/icon.png
+          curl -fsSL https://raw.githubusercontent.com/metrumto/balsamur_v2/main/icon-192.png -o android/app/src/main/res/drawable/footer_icon.png
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -23,5 +25,5 @@ jobs:
       - name: Publish APK
         uses: actions/upload-artifact@v4
         with:
-          name: BalsaMur-debug-apk
+          name: BalsaMur-APK-v4
           path: android/app/build/outputs/apk/debug/app-debug.apk
