@@ -107,7 +107,9 @@ public class MainActivity extends Activity {
         web.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         root.addView(web,new LinearLayout.LayoutParams(-1,0,1));
         ImageView footer=new ImageView(this); footer.setImageResource(R.drawable.footer_icon); footer.setScaleType(ImageView.ScaleType.FIT_CENTER); footer.setPadding(dp(8),dp(4),dp(8),dp(4));
-        root.addView(footer,new LinearLayout.LayoutParams(-1,dp(72)));
+        LinearLayout.LayoutParams footerParams=new LinearLayout.LayoutParams(-1,dp(72));
+        footerParams.bottomMargin=-dp(10*3+1);
+        root.addView(footer,footerParams);
         setContentView(root); web.loadUrl("file:///android_asset/www/index.html");
     }
 
